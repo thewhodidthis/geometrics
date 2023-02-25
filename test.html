@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>geometrics.js</title>
+    <script type="module">
+      import "https://thewhodidthis.github.io/cutaway/main.js"
+      import { assert, report } from "https://thewhodidthis.github.io/tapeless/main.js"
+      import { poltocar, cartopol } from "./converter.js"
+      import { poly } from "./main.js"
+
+      const { equal, ok } = assert
+
+      const count = 5
+      const reach = 100
+      const shape = poly(reach, count)
+
+      equal
+        .describe("poly", "will compute")
+        .test(shape.length, count)
+
+      equal
+        .describe("should be equal")
+        .test(typeof poltocar(), "object")
+
+      equal
+        .describe("should be equivalent", "return value is of type and contains")
+        .test(JSON.stringify(poltocar(0)), JSON.stringify({ x: 1, y: 0 }))
+
+      const expected = Math.pow(2, -53)
+      const { x } = poltocar(Math.PI / 6)
+      const t1 = x - (Math.sqrt(3) / 2)
+
+      equal
+        .describe("should be equal", "return value compares with known result")
+        .test(t1, expected)
+
+      const { y } = poltocar((7 * Math.PI) / 4)
+      const t2 = (Math.sqrt(2) / -2) - y
+
+      equal
+        .describe("should be equal")
+        .test(t2, expected)
+
+      try {
+        poltocar(undefined, Infinity)
+        ok
+          .describe("should not throw", "will not throw if misconfigured")
+          .test(true)
+      } catch (e) {
+        throw e
+      }
+
+      equal
+        .describe("should be equal")
+        .test(typeof cartopol(), "object")
+
+      equal
+        .describe("should be equivalent", "return value is of type and contains")
+        .test(JSON.stringify(cartopol(0, 1)), JSON.stringify({ azimuth: Math.PI / 2, radius: 1 }))
+
+      const { radius: r } = cartopol(1.5)
+
+      equal
+        .describe("should be equal", "return value compares with known result")
+        .test(r, Math.sqrt(2.25))
+
+      const { azimuth: t } = cartopol()
+
+      equal
+        .test(t, 0)
+        .describe("should be equal")
+
+      try {
+        cartopol(NaN, Infinity)
+        ok
+          .describe("should not throw", "will not throw if misconfigured")
+          .test(true)
+      } catch (e) {
+        throw e
+      }
+
+      report()
+    </script>
+  </head>
+  <body></body>
+</html>
