@@ -1,12 +1,24 @@
 import { rose as lookup } from "./main.js"
 
-const canvas = document.querySelector("canvas")
-const target = canvas.getContext("2d")
+const target = document.querySelector("canvas").getContext("2d", { alpha: false })
+const { width, height } = target.canvas
+
+// These effectively reset the context and should come before any drawing code.
+target.canvas.height = height * self.devicePixelRatio
+target.canvas.width = width * self.devicePixelRatio
+
+// Scale the context to ensure correct drawing operations.
+target.scale(self.devicePixelRatio, self.devicePixelRatio)
+
+// Set the "drawn" size of the canvas.
+const [sheet] = document.styleSheets
+
+sheet.insertRule(`canvas { height: ${height}px; width: ${width}px; }`, sheet.cssRules.length)
 
 target.strokeStyle = "#888"
 target.lineWidth = 1.5
 
-const step = { x: canvas.width / 4, y: canvas.height / 3 }
+const step = { x: width / 4, y: height / 3 }
 const cell = { x: step.x * 0.5, y: step.y * 0.5 }
 const size = cell.y * 0.75
 
